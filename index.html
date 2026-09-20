@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PhishGuard NG — AI Cybersecurity Awareness</title>
+  <meta name="description" content="PhishGuard NG helps users understand suspicious messages and practice safer online behavior.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="shield">🛡️</span><span>PhishGuard <b>NG</b></span></div>
+  <span class="tag">Cybersecurity Awareness</span>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">AI-ENABLED AWARENESS MVP</p>
+      <h1>Think before you <span>click.</span></h1>
+      <p class="lead">Analyze suspicious messages, understand the warning signs, and learn safer online habits.</p>
+      <a class="cta" href="#checker">Check a message ↓</a>
+    </div>
+    <div class="hero-card">
+      <div class="pulse">●</div>
+      <h3>Risk-aware guidance</h3>
+      <p>Clear explanations instead of unexplained verdicts.</p>
+    </div>
+  </section>
+
+  <section id="checker" class="panel">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">01 · MESSAGE CHECKER</p>
+        <h2>Is this message suspicious?</h2>
+      </div>
+      <span class="badge">Prototype</span>
+    </div>
+    <p class="muted">Paste a message below. Do not enter passwords, OTPs, PINs, bank details, or other sensitive information.</p>
+    <textarea id="message" placeholder="Example: Congratulations! You have won ₦500,000. Click this link now to claim your prize..."></textarea>
+    <div class="actions">
+      <button id="analyzeBtn" class="primary">Analyze message</button>
+      <button id="exampleBtn" class="secondary">Load example</button>
+      <button id="clearBtn" class="ghost">Clear</button>
+    </div>
+    <div id="result" class="result hidden"></div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <p class="eyebrow">02 · LEARN</p>
+      <h2>Common threats</h2>
+      <div class="threats">
+        <article><b>🎣 Phishing</b><p>Fake messages or sites designed to steal information.</p></article>
+        <article><b>👤 Social engineering</b><p>Manipulation that pressures people into unsafe actions.</p></article>
+        <article><b>📱 Messaging scams</b><p>Fraudulent WhatsApp, SMS, email or social-media messages.</p></article>
+        <article><b>🎁 Fake giveaways</b><p>Unexpected prizes used to attract clicks or personal data.</p></article>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">03 · QUIZ</p>
+      <h2>Test your awareness</h2>
+      <p><b>Someone calls claiming to be your bank and asks for your OTP. What should you do?</b></p>
+      <div id="quiz">
+        <button class="option" data-correct="false">A. Give the OTP</button>
+        <button class="option" data-correct="false">B. Send your PIN too</button>
+        <button class="option" data-correct="true">C. Refuse and contact the bank through an official channel</button>
+        <button class="option" data-correct="false">D. Continue the call and follow instructions</button>
+      </div>
+      <div id="quizFeedback" class="feedback"></div>
+    </div>
+  </section>
+
+  <section class="panel responsible">
+    <p class="eyebrow">04 · RESPONSIBLE AI</p>
+    <h2>Safety by design</h2>
+    <div class="principles">
+      <div><b>🔒 Privacy</b><span>Never submit passwords, OTPs, PINs or banking credentials.</span></div>
+      <div><b>🔎 Transparency</b><span>The checker shows the warning signs behind its risk assessment.</span></div>
+      <div><b>⚖️ Fairness</b><span>Assessment focuses on message characteristics, not sensitive personal attributes.</span></div>
+      <div><b>🧭 Human judgment</b><span>The result is guidance, not a guaranteed security verdict. Verify important claims independently.</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <b>PhishGuard NG</b> · Innovation Challenge MVP · 3MTT × MIT Open Learning Universal AI Programme
+  </footer>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
