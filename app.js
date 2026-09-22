@@ -1,5 +1,5 @@
-const AI_ENDPOINT = "https://phishguard-ai.workers.dev";
-
+ const AI_ENDPOINT = "https://phishguard-ai.workers.dev";
+fetch(AI_ENDPOINT, {
 const message = document.getElementById("message");
 const result = document.getElementById("result");
 const analyzeBtn = document.getElementById("analyzeBtn");
