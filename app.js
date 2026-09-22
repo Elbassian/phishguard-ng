@@ -1,69 +1,112 @@
+const AI_ENDPOINT = "https://phishguard-ai.workers.dev";
+
 const message = document.getElementById("message");
 const result = document.getElementById("result");
+const analyzeBtn = document.getElementById("analyzeBtn");
 
-const example = "Congratulations! You have won ₦500,000. Click https://claim-prize.example/ now to claim your prize. This offer expires in 10 minutes. Send your OTP to confirm your account.";
+const example =
+  "Congratulations! You have won ₦500,000. Click https://claim-prize.example/ now to claim your prize. This offer expires in 10 minutes. Send your OTP to confirm your account.";
 
 document.getElementById("exampleBtn").onclick = () => {
   message.value = example;
-  message.focus();
 };
 
 document.getElementById("clearBtn").onclick = () => {
   message.value = "";
   result.className = "result hidden";
-  result.innerHTML = "";
+  result.textContent = "";
 };
 
-function analyze(text){
-  const t = text.toLowerCase();
-  const checks = [
-    {keys:["otp","one time password","verification code"], label:"Requests or mentions an OTP/verification code", weight:3},
-    {keys:["password","passcode","pin"], label:"Requests sensitive authentication information", weight:3},
-    {keys:["click","tap here","open this link","login here"], label:"Uses a call to click/open a link", weight:2},
-    {keys:["urgent","immediately","act now","expires","within 10 minutes"], label:"Creates urgency or time pressure", weight:2},
-    {keys:["won","winner","congratulations","prize","free money","cash"], label:"Uses an unexpected prize or financial reward", weight:2},
-    {keys:["verify your account","account suspended","account locked"], label:"Creates fear about an account problem", weight:2},
-    {keys:["send money","transfer","payment"], label:"Requests a financial action", weight:2},
-    {keys:["http://","https://"], label:"Contains a web link", weight:1}
-  ];
-  let score=0, reasons=[];
-  checks.forEach(c=>{
-    if(c.keys.some(k=>t.includes(k))){score+=c.weight; reasons.push(c.label);}
-  });
-  let level = score>=7 ? "HIGH RISK" : score>=4 ? "MEDIUM RISK" : "LOWER RISK";
-  let cls = score>=7 ? "high" : score>=4 ? "medium" : "low";
-  return {level, cls, score, reasons};
+function showResult(title, body, cls = "medium") {
+  result.className = result ${cls};
+  result.innerHTML = "";
+
+  const heading = document.createElement("div");
+  heading.className = "risk";
+  heading.textContent = title;
+
+  const content = document.createElement("div");
+  content.style.whiteSpace = "pre-wrap";
+  content.textContent = body;
+
+  result.append(heading, content);
 }
 
-document.getElementById("analyzeBtn").onclick = () => {
+async function analyzeWithAI(text) {
+  const response = await fetch(AI_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: text
+    })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "AI analysis failed.");
+  }
+
+  return data.analysis;
+}
+
+analyzeBtn.onclick = async () => {
+
   const text = message.value.trim();
-  if(!text){
-    result.className = "result medium";
-    result.innerHTML = "<div class='risk'>Please enter a message</div><p>Paste a suspicious message to run the prototype analysis.</p>";
+
+  if (!text) {
+    showResult(
+      "MESSAGE REQUIRED",
+      "Paste a message to analyze.",
+      "medium"
+    );
     return;
   }
-  const r = analyze(text);
-  const reasons = r.reasons.length ? r.reasons.map(x=>`<li>${x}</li>`).join("") : "<li>No major warning indicators were detected by this prototype.</li>";
-  const advice = r.cls === "high"
-    ? "Do not click links or share credentials. Verify the claim through an official channel and report the message if appropriate."
-    : r.cls === "medium"
-    ? "Pause before acting. Verify the sender and claim independently, especially before sharing information or making payments."
-    : "No major indicators were detected, but this does not prove the message is safe. Stay cautious and verify unexpected requests.";
-  result.className = `result ${r.cls}`;
-  result.innerHTML = `<div class="risk">${r.level}</div>
-    <p><b>Prototype risk score:</b> ${r.score}</p>
-    <p><b>Why it was flagged:</b></p><ul>${reasons}</ul>
-    <div class="advice"><b>Recommended action:</b> ${advice}</div>`;
-  result.scrollIntoView({behavior:"smooth",block:"nearest"});
-};
 
-document.querySelectorAll(".option").forEach(btn=>{
-  btn.onclick=()=>{
-    const fb=document.getElementById("quizFeedback");
-    if(btn.dataset.correct==="true"){
-      fb.textContent="✅ Correct. Never share an OTP. Contact the bank through an official channel.";
-    }else{
-      fb.textContent="❌ Not the safest choice. Never share an OTP, PIN or password with someone who contacts you unexpectedly.";
+  analyzeBtn.disabled = true;
+  analyzeBtn.textContent = "Analyzing...";
+
+  showResult(
+    "AI ANALYSIS IN PROGRESS",
+    "PhishGuard NG is analyzing observable warning signs...",
+    "medium"
+  );
+
+  try {
+
+    const analysis = await analyzeWithAI(text);
+
+    const upper = analysis.toUpperCase();
+
+    let riskClass = "low";
+
+    if (upper.includes("HIGH RISK")) {
+      riskClass = "high";
+    } else if (upper.includes("MEDIUM RISK")) {
+      riskClass = "medium";
     }
-  };
-});
+
+    showResult(
+      "AI ANALYSIS",
+      analysis,
+      riskClass
+    );
+
+  } catch (error) {
+
+    showResult(
+      "AI ANALYSIS UNAVAILABLE",
+      error.message +
+      "\n\nPlease try again. Important security decisions should always be independently verified.",
+      "medium"
+    );
+
+  } finally {
+
+    analyzeBtn.disabled = false;
+    analyzeBtn.textContent = "Analyze message";
+
+  }
+};
